@@ -1,0 +1,9 @@
+server:
+  port: 8181
+  servlet:
+    context-path: /api
+
+ycxapi:
+  client:
+    access-key: 123
+    secret-key: 123
