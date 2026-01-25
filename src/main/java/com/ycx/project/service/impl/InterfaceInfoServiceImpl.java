@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ycx.project.common.ErrorCode;
 import com.ycx.project.exception.BusinessException;
 import com.ycx.project.service.InterfaceInfoService;
-import com.ycx.project.model.entity.InterfaceInfo;
+import com.ycx.model.entity.InterfaceInfo;
 import com.ycx.project.mapper.InterfaceInfoMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;

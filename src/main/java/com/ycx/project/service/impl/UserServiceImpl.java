@@ -1,11 +1,12 @@
 package com.ycx.project.service.impl;
 
+import cn.hutool.core.util.RandomUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ycx.project.common.ErrorCode;
 import com.ycx.project.exception.BusinessException;
 import com.ycx.project.mapper.UserMapper;
-import com.ycx.project.model.entity.User;
+import com.ycx.model.entity.User;
 import com.ycx.project.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -63,10 +64,15 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
             }
             // 2. 加密
             String encryptPassword = DigestUtils.md5DigestAsHex((SALT + userPassword).getBytes());
+            // 3. 分配密钥
+            String accessKey = DigestUtils.md5DigestAsHex((SALT+userAccount + RandomUtil.randomNumbers(5)).getBytes());
+            String secretKey = DigestUtils.md5DigestAsHex((SALT+userAccount + RandomUtil.randomNumbers(8)).getBytes());
             // 3. 插入数据
             User user = new User();
             user.setUserAccount(userAccount);
             user.setUserPassword(encryptPassword);
+            user.setAccessKey(accessKey);
+            user.setSecretKey(secretKey);
             boolean saveResult = this.save(user);
             if (!saveResult) {
                 throw new BusinessException(ErrorCode.SYSTEM_ERROR, "注册失败，数据库错误");

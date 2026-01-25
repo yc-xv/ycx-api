@@ -10,7 +10,7 @@ import com.ycx.project.common.ResultUtils;
 import com.ycx.project.exception.BusinessException;
 import com.ycx.project.model.dto.user.*;
 
-import com.ycx.project.model.entity.User;
+import com.ycx.model.entity.User;
 import com.ycx.project.model.vo.UserVO;
 import com.ycx.project.service.UserService;
 import org.apache.commons.lang3.StringUtils;

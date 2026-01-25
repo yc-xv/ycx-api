@@ -1,6 +1,6 @@
 package com.ycx.project.service;
 
-import com.ycx.project.model.entity.User;
+import com.ycx.model.entity.User;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

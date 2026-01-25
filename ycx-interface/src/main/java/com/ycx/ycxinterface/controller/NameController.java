@@ -23,16 +23,9 @@ public class NameController {
 
     @PostMapping("/user")
     public String getUserNameByPost(@RequestBody User user, HttpServletRequest request) {
-        String accesskey = request.getHeader("accessKey");
-        String sign = request.getHeader("sign");
-        String timestamp = request.getHeader("timestamp");
-        String nonce = request.getHeader("nonce");
-        HashMap<String, Object> paramMap = new HashMap<>();
-        paramMap.put("accessKey", accesskey);
-        paramMap.put("sign", sign);
-        paramMap.put("timestamp", timestamp);
-        paramMap.put("nonce", nonce);
-        return "POST 用户名字是" + user.getUsername()+paramMap.toString();
+
+
+        return "POST 用户名字是" + user.getUsername();
     }
 
 

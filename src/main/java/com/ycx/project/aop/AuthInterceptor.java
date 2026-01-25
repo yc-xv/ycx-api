@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.ycx.project.annotation.AuthCheck;
 import com.ycx.project.common.ErrorCode;
 import com.ycx.project.exception.BusinessException;
-import com.ycx.project.model.entity.User;
+import com.ycx.model.entity.User;
 import com.ycx.project.service.UserService;
 import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.ProceedingJoinPoint;

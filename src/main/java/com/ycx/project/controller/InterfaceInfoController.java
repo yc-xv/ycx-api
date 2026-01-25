@@ -3,20 +3,20 @@ package com.ycx.project.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.google.gson.Gson;
+import com.ycx.model.entity.InterfaceInfo;
+import com.ycx.model.entity.User;
 import com.ycx.project.annotation.AuthCheck;
-import com.ycx.project.common.BaseResponse;
-import com.ycx.project.common.DeleteRequest;
-import com.ycx.project.common.ErrorCode;
-import com.ycx.project.common.ResultUtils;
+import com.ycx.project.common.*;
 import com.ycx.project.constant.CommonConstant;
 import com.ycx.project.exception.BusinessException;
 import com.ycx.project.model.dto.interfaceinfo.InterfaceInfoAddRequest;
+import com.ycx.project.model.dto.interfaceinfo.InterfaceInfoInvokeRequest;
 import com.ycx.project.model.dto.interfaceinfo.InterfaceInfoQueryRequest;
 import com.ycx.project.model.dto.interfaceinfo.InterfaceInfoUpdateRequest;
-import com.ycx.project.model.entity.InterfaceInfo;
-import com.ycx.project.model.entity.User;
+
 import com.ycx.project.service.InterfaceInfoService;
 import com.ycx.project.service.UserService;
+import com.ycx.ycxapisdk.client.YcxApiClient;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -24,6 +24,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 import java.util.List;
 
 @RestController
@@ -190,7 +192,68 @@ public class InterfaceInfoController {
         Page<InterfaceInfo> interfaceInfoPage = interfaceInfoService.page(new Page<>(current, size), queryWrapper);
         return ResultUtils.success(interfaceInfoPage);
     }
+   //Todo 接口上线
+   //Todo 接口下线
+    //通用接口
+   @PostMapping("/invoke")
+   public BaseResponse<Object> invokeInterfaceInfo(@RequestBody InterfaceInfoInvokeRequest interfaceInfoInvokeRequest,
+                                                   HttpServletRequest request) {
+       if (interfaceInfoInvokeRequest == null || interfaceInfoInvokeRequest.getId() <= 0) {
+           throw new BusinessException(ErrorCode.PARAMS_ERROR);
+       }
+       Long id = interfaceInfoInvokeRequest.getId();
+       String userRequestParams = interfaceInfoInvokeRequest.getUserRequestParams();
+       // 判断是否存在
 
+       InterfaceInfo oldInterfaceInfo = interfaceInfoService.getById(id);
+       //数据库中找到请求方法
+       String interfaceInfoName = oldInterfaceInfo.getName();
+       if (oldInterfaceInfo == null) {
+           throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
+       }
+       //判断接口状态
+       if (oldInterfaceInfo.getStatus() != InterfaceInfoStatusEnum.ONLINE.getValue()){
+           throw new BusinessException(ErrorCode.FORBIDDEN_ERROR,"接口已关闭");
+       }
+       User loginUser = userService.getLoginUser(request);
+       String accessKey = loginUser.getAccessKey();
+       String secretKey = loginUser.getSecretKey();
+       Object result = reflectionInterface(YcxApiClient.class, interfaceInfoName, userRequestParams, accessKey, secretKey);
 
-
+       return ResultUtils.success(result);
+   }
+   //反射动态调用接口
+   public Object reflectionInterface(Class<?> reflectionClass, String methodName, String parameter, String accessKey, String secretKey) {
+       //构造反射类的实例
+       Object result = null;
+       try {
+           Constructor<?> constructor = reflectionClass.getDeclaredConstructor(String.class, String.class);
+           //获取SDK的实例，同时传入密钥
+           YcxApiClient ycxApiClient = (YcxApiClient) constructor.newInstance(accessKey, secretKey);
+           //获取SDK中所有的方法
+           Method[] methods = ycxApiClient.getClass().getMethods();
+           //筛选出调用方法
+           for (Method method : methods
+           ) {
+               if (method.getName().equals(methodName)) {
+                   //获取方法参数类型
+                   Class<?>[] parameterTypes = method.getParameterTypes();
+                   Method method1;
+                   if (parameterTypes.length == 0){
+                       method1 = ycxApiClient.getClass().getMethod(methodName);
+                       return method1.invoke(ycxApiClient);
+                   }
+                   method1 = ycxApiClient.getClass().getMethod(methodName, parameterTypes[0]);
+                   //getMethod，多参会考虑重载情况获取方法,前端传来参数是JSON格式转换为String类型
+                   //参数Josn化
+                   Gson gson = new Gson();
+                   Object args = gson.fromJson(parameter, parameterTypes[0]);
+                   return result = method1.invoke(ycxApiClient, args);
+               }
+           }
+       } catch (Exception e) {
+           log.error("反射调用参数错误",e);
+       }
+       return result;
+   }
 }

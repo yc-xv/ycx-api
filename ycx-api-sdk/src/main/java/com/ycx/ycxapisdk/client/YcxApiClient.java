@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class YcxApiClient {
-    private static final String GATEWAY_HOST = "http://localhost:8181";
+    private static final String GATEWAY_HOST = "http://localhost:8090";
 
     private String accessKey;
 
@@ -46,7 +46,7 @@ public class YcxApiClient {
         hashMap.put("nonce", RandomUtil.randomNumbers(4));
         hashMap.put("body", body);
         hashMap.put("timestamp", String.valueOf(System.currentTimeMillis() / 1000));
-        hashMap.put("sign", SignUtils.genSign(body, secretKey));
+        hashMap.put("sign", SignUtils.getSign(body, secretKey));
         return hashMap;
     }
 

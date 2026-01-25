@@ -1,7 +1,7 @@
 package com.ycx.project.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.ycx.project.model.entity.InterfaceInfo;
+import com.ycx.model.entity.InterfaceInfo;
 
 /**
 * @author ycx

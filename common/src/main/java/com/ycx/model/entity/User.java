@@ -1,4 +1,6 @@
-package com.ycx.project.model.entity;
+package com.ycx.model.entity;
+
+
 
 import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
@@ -59,6 +61,10 @@ public class User implements Serializable {
      * 更新时间
      */
     private Date updateTime;
+
+    private String accessKey;
+
+    private String secretKey;
 
     /**
      * 是否删除
