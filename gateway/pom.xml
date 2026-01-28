@@ -49,6 +49,19 @@
 			<version>2.1.0</version>
 		</dependency>
 
+		<!-- Sentinel 核心 -->
+		<dependency>
+			<groupId>com.alibaba.cloud</groupId>
+			<artifactId>spring-cloud-starter-alibaba-sentinel</artifactId>
+		</dependency>
+
+		<!-- Sentinel 对 Gateway 的适配 -->
+		<dependency>
+			<groupId>com.alibaba.cloud</groupId>
+			<artifactId>spring-cloud-alibaba-sentinel-gateway</artifactId>
+		</dependency>
+
+
 		<!-- Nacos 服务发现 -->
 		<dependency>
 			<groupId>com.alibaba.cloud</groupId>

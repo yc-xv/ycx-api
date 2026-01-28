@@ -15,6 +15,17 @@ spring:
     nacos:
       discovery:
         server-addr: 127.0.0.1:8849
+    sentinel:
+      transport:
+        dashboard: localhost:8080
+      eager: true
+      scg:
+        fallback:
+          content-type: application/json
+          mode: response
+          response-status: 200
+          response-body: '{"code":0,"message":"系统繁忙，请稍后再试...","data":null}'
+
 dubbo:
   application:
     name: dubbo-springboot-consumer
