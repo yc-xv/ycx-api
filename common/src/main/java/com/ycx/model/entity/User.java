@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 
 /**
@@ -65,6 +66,8 @@ public class User implements Serializable {
     private String accessKey;
 
     private String secretKey;
+
+    private BigDecimal balance;
 
     /**
      * 是否删除

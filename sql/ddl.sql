@@ -23,6 +23,8 @@ create table if not exists user
         unique (userAccount)
 ) comment '用户';
 
+alter table user
+    add column balance decimal(12,2) default 0 not null comment '账户余额';
 
 -- 接口信息
 create table if not exists `interface_info`
@@ -56,3 +58,33 @@ create table if not exists `user_interface_info`
     `updateTime` datetime default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
     `isDelete` tinyint default 0 not null comment '是否删除(0-未删, 1-已删)'
 ) comment '用户调用接口关系';
+
+create table if not exists api_order
+(
+    id            bigint auto_increment primary key comment '主键',
+    orderSn      varchar(64)  not null comment '订单号',
+    userId       bigint       not null comment '用户id',
+    interfaceInfoId bigint not null comment '接口 id',
+    status        tinyint default 0 not null comment '订单状态 TO_PAY-0 / PAID-1 / CANCEL-2',
+    orderNum     int not null comment '接口数量',
+    charging     decimal not null comment '单价',
+
+    create_time   datetime default CURRENT_TIMESTAMP not null comment '创建时间',
+    update_time   datetime default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
+
+    is_delete     tinyint default 0 not null comment '逻辑删除',
+
+    unique key uk_order_sn(orderSn),
+    index idx_user_id(userid),
+    index idx_status(status)
+) comment '接口订单表';
+
+create table if not exists payment_consume_log
+(
+    id          bigint auto_increment primary key,
+    orderSn    varchar(64) not null,
+    createTime datetime default CURRENT_TIMESTAMP,
+
+    unique key uk_order_sn(orderSn)
+) comment '支付消费幂等表';
+
